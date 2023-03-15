@@ -14,18 +14,40 @@
             padding: 10px;
             margin-bottom: 10px;
         }
+        pre {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        #remaining-tokens {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div id="chat-box"></div>
+    <div id="remaining-tokens">Remaining tokens: <span id="token-counter">-</span></div>
     <form id="chat-form">
         <input type="text" id="input-prompt" placeholder="Type your message..." autocomplete="off" style="width: 80%;">
         <button type="submit">Send</button>
     </form>
-    <div id="remaining-tokens"></div>
-    <button id="reset-conversation">Reset Conversation</button>
+    <button id="reset-btn">Reset</button>
     <script>
         let conversation_history = "";
+        let remaining_tokens = 0;
+
+        function update_token_counter() {
+            $("#token-counter").text(remaining_tokens);
+        }
+
+        function reset_chat() {
+            conversation_history = "";
+            $("#chat-box").empty();
+            remaining_tokens = 0;
+            update_token_counter();
+        }
 
         $(document).ready(function() {
             $("#chat-form").submit(function(e) {
@@ -36,18 +58,21 @@
                     $("#input-prompt").val("");
 
                     conversation_history += `User: ${user_input}\nAI: `;
-$.ajax({
-    url: "/chat",
-    method: "POST",
-    data: JSON.stringify({ user_input: user_input, conversation_history: conversation_history }),
-    contentType: "application/json;charset=UTF-8",
-    success: function(response) {
-        const message = response.message.replace(/<code>/g, '<pre>').replace(/<\/code>/g, '</pre>');
-        $("#chat-box").append(`<p><b>Gordon:</b> ${message}</p>`);
-        $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
-        conversation_history += response.message + "\n";
-        $("#remaining-tokens").html(`<b>Remaining tokens:</b> ${response.remaining_tokens}`);
-    },
+
+                    $.ajax({
+                        url: "/chat",
+                        method: "POST",
+                        data: JSON.stringify({ user_input: user_input, conversation_history: conversation_history }),
+                        contentType: "application/json;charset=UTF-8",
+			success: function(response) {
+			    let formattedMessage = response.message;
+    			    formattedMessage = `<pre>${formattedMessage}</pre>`; // Always wrap the message in a <pre> tag
+    			    $("#chat-box").append(`<p><b>Gordon:</b> ${formattedMessage}</p>`);
+                            $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+                            conversation_history += response.message + "\n";
+                            remaining_tokens = response.remaining_tokens;
+                            update_token_counter();
+  		        },
 
                         error: function() {
                             alert("An error occurred. Please try again.");
@@ -56,9 +81,8 @@ $.ajax({
                 }
             });
 
-            $("#reset-conversation").click(function() {
-                conversation_history = "";
-                $("#chat-box").empty();
+            $("#reset-btn").click(function() {
+                reset_chat();
             });
         });
     </script>
