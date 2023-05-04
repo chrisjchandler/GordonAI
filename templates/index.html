@@ -33,21 +33,50 @@
         <input type="text" id="input-prompt" placeholder="Type your message..." autocomplete="off" style="width: 80%;">
         <button type="submit">Send</button>
     </form>
-    <button id="reset-btn">Reset</button>
+    <button id="voice-input">Voice Input</button>
+    <button id="toggle-speech-output">Toggle Speech Output</button>
     <script>
         let conversation_history = "";
         let remaining_tokens = 0;
+        let speech_output_enabled = true;
 
         function update_token_counter() {
             $("#token-counter").text(remaining_tokens);
         }
 
-        function reset_chat() {
-            conversation_history = "";
-            $("#chat-box").empty();
-            remaining_tokens = 0;
-            update_token_counter();
+        // Speech-to-Text
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+        if (recognition) {
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            $("#voice-input").on("click", function() {
+                recognition.start();
+            });
+
+            recognition.onresult = function(event) {
+                const user_input = event.results[event.results.length - 1][0].transcript;
+                $("#input-prompt").val(user_input);
+                $("#chat-form").submit();
+            };
+        } else {
+            alert("Your browser does not support SpeechRecognition. Voice input will be disabled.");
+            $("#voice-input").prop("disabled", true);
         }
+
+        // Text-to-Speech
+        function speak(text) {
+            if (speech_output_enabled) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        $("#toggle-speech-output").on("click", function() {
+            speech_output_enabled = !speech_output_enabled;
+        });
 
         $(document).ready(function() {
             $("#chat-form").submit(function(e) {
@@ -57,35 +86,33 @@
                     $("#chat-box").append(`<p><b>You:</b> ${user_input}</p>`);
                     $("#input-prompt").val("");
 
-                    conversation_history += `User: ${user_input}\nAI: `;
+                    conversation_history += `User: ${user_input
+                    }\nAI: `;
+$.ajax({
+    url: "/chat",
+    method: "POST",
+    data: JSON.stringify({ user_input: user_input, conversation_history: conversation_history }),
+    contentType: "application/json;charset=UTF-8",
+    success: function(response) {
+        let formattedMessage = response.message;
+        formattedMessage = `<pre>${formattedMessage}</pre>`;
+        $("#chat-box").append(`<p><b>Gordon:</b> ${formattedMessage}</p>`);
+        $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+        conversation_history += response.message + "\n";
+        remaining_tokens = response.remaining_tokens;
+        update_token_counter();
 
-                    $.ajax({
-                        url: "/chat",
-                        method: "POST",
-                        data: JSON.stringify({ user_input: user_input, conversation_history: conversation_history }),
-                        contentType: "application/json;charset=UTF-8",
-			success: function(response) {
-			    let formattedMessage = response.message;
-    			    formattedMessage = `<pre>${formattedMessage}</pre>`; // Always wrap the message in a <pre> tag
-    			    $("#chat-box").append(`<p><b>Gordon:</b> ${formattedMessage}</p>`);
-                            $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
-                            conversation_history += response.message + "\n";
-                            remaining_tokens = response.remaining_tokens;
-                            update_token_counter();
-  		        },
-
-                        error: function() {
-                            alert("An error occurred. Please try again.");
-                        }
-                    });
-                }
-            });
-
-            $("#reset-btn").click(function() {
-                reset_chat();
-            });
-        });
-    </script>
+        // Speak the message
+        speak(response.message);
+    },
+    error: function() {
+        alert("An error occurred. Please try again.");
+    }
+});
+}
+});
+});
+</script>
 </body>
 </html>
 
