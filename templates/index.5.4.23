@@ -4,21 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gordon AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
         #chat-box {
             width: 100%;
             height: 400px;
@@ -26,11 +13,7 @@
             overflow-y: scroll;
             padding: 10px;
             margin-bottom: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         pre {
             background-color: #f0f0f0;
             border: 1px solid #ccc;
@@ -38,39 +21,19 @@
             white-space: pre-wrap;
             overflow-x: auto;
         }
-
         #remaining-tokens {
             margin-bottom: 10px;
-        }
-
-        #options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        #voice-input,
-        #speech-toggle {
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h1>Gordon AI</h1>
     <div id="chat-box"></div>
     <div id="remaining-tokens">Remaining tokens: <span id="token-counter">-</span></div>
     <form id="chat-form">
         <input type="text" id="input-prompt" placeholder="Type your message..." autocomplete="off" style="width: 80%;">
         <button type="submit">Send</button>
     </form>
-    <div id="options">
-        <button id="voice-input">Voice Input</button>
-        <label>
-            <input type="checkbox" id="speech-toggle" checked>
-            Speech Output
-        </label>
-    </div>
+    <button id="reset-btn">Reset</button>
     <script>
         let conversation_history = "";
         let remaining_tokens = 0;
@@ -79,31 +42,15 @@
             $("#token-counter").text(remaining_tokens);
         }
 
-        // Speech-to-Text
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        $("#voice-input").on("click", function() {
-            recognition.start();
-        });
-
-        recognition.onresult = function(event) {
-            const user_input = event.results[event.results.length - 1][0].transcript;
-            $("#input-prompt").val(user_input);
-            $("#chat-form").submit();
-        };
-
-        // Text-to-Speech
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            speechSynthesis.speak(utterance);
+        function reset_chat() {
+            conversation_history = "";
+            $("#chat-box").empty();
+            remaining_tokens = 0;
+            update_token_counter();
         }
 
         $(document).ready(function() {
-                        $("#chat-form").submit(function(e) {
+            $("#chat-form").submit(function(e) {
                 e.preventDefault();
                 const user_input = $("#input-prompt").val();
                 if (user_input) {
@@ -117,25 +64,25 @@
                         method: "POST",
                         data: JSON.stringify({ user_input: user_input, conversation_history: conversation_history }),
                         contentType: "application/json;charset=UTF-8",
-                        success: function(response) {
-                            let formattedMessage = response.message;
-                            formattedMessage = `<pre>${formattedMessage}</pre>`;
-                            $("#chat-box").append(`<p><b>Gordon:</b> ${formattedMessage}</p>`);
+			success: function(response) {
+			    let formattedMessage = response.message;
+    			    formattedMessage = `<pre>${formattedMessage}</pre>`; // Always wrap the message in a <pre> tag
+    			    $("#chat-box").append(`<p><b>Gordon:</b> ${formattedMessage}</p>`);
                             $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
                             conversation_history += response.message + "\n";
                             remaining_tokens = response.remaining_tokens;
                             update_token_counter();
+  		        },
 
-                            // Speak the message
-                            if ($("#speech-toggle").prop("checked")) {
-                                speak(response.message);
-                            }
-                        },
                         error: function() {
                             alert("An error occurred. Please try again.");
                         }
                     });
                 }
+            });
+
+            $("#reset-btn").click(function() {
+                reset_chat();
             });
         });
     </script>
