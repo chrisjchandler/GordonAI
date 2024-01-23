@@ -18,8 +18,8 @@ This repository contains a simple yet powerful chatbot implementation using Flas
 ## Installation
 
 1. Clone the repository:
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
+git clone https://github.com/chrisjchandler/GordonAI.git
+cd GordonAi
 
 pip install Flask requests
 
