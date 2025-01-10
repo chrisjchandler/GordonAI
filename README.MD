@@ -108,9 +108,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - This project is powered by [OpenAI](https://openai.com/).
 - Flask, a Python web framework, is used for the backend implementation.
 
-## Contact
-
-For any queries or suggestions, please contact [Your Name](mailto:your-email@example.com).
 
 ---
 
