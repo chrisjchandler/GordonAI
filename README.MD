@@ -121,4 +121,4 @@ Made with ♥ by [Chris](https://about.me/chrisjchandler)
 import your open AI key
 export OPENAI_API_KEY="your key name here"
 Runs on a flask or gunicorn backend
-demo site @ https://www.msitproject.site
+demo site @ https://msitproject.site
