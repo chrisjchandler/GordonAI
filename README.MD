@@ -1,63 +1,77 @@
-# Chatbot Implementation using Flask and OpenAI's GPT-3.5-turbo
+# Gordon AI - Powered by GPT-4
 
-This repository contains a simple yet powerful chatbot implementation using Flask, a popular web framework in Python, and OpenAI's GPT-3.5-turbo model. The chatbot is designed to provide conversational interactions, leveraging the advanced natural language processing capabilities of GPT-3.5-turbo.
+Gordon AI is an interactive chatbot web application designed for dynamic user interaction. This application leverages OpenAI's GPT-4 model for generating responses, providing enhanced contextual understanding and conversational depth.
 
-## Features
+With its recent updates, Gordon AI now supports advanced features, including **continuous voice input**, **toggleable text-to-speech**, and an improved user interface for a seamless and intuitive user experience.
 
-- Flask-based web application.
-- Integration with OpenAI's GPT-3.5-turbo for generating conversational responses.
-- Interactive chat interface.
+---
 
-## Requirements
+## **Key Features**
 
-- Python 3.6 or higher.
-- Flask
-- Requests library
-- Access to OpenAI's API.
+### 🧠 **Powered by GPT-4**
+- Enhanced language understanding and response generation.
+- Offers nuanced, context-aware answers.
 
-## Installation
+### 🎤 **Continuous Voice Input**
+- Users can now enable hands-free operation with continuous speech recognition.
+- Automatically restarts listening after each input for uninterrupted interaction.
+- A toggle button allows users to start/stop voice input dynamically.
+
+### 🔊 **Toggleable Text-to-Speech**
+- Enable or mute audio responses dynamically during the session.
+- Visual indicators (🔊 for enabled, 🔇 for muted) enhance usability.
+
+### 💬 **Interactive Chatbox**
+- A responsive and aesthetically pleasing chat interface.
+- Syntax-highlighted responses for better readability of code outputs.
+- Dynamic resizing for chat input.
+
+### 🌐 **Integrated Project Links**
+- Includes quick-access links to related tools and resources:
+  - Medication Service
+  - BGP Monitor
+  - GeoIP Lookup
+  - ChatGPT Detector
+  - Gordon AI Source Code
+
+### 🛠️ **Modern Tech Stack**
+- Frontend:
+  - **HTML5** and **CSS3** for responsive design.
+  - **Bootstrap 5** for styling and layout.
+  - **jQuery** for streamlined DOM manipulation.
+  - **Highlight.js** for syntax highlighting.
+- Backend:
+  - Flask for handling server-side logic.
+  - Gunicorn for production-ready WSGI HTTP serving.
+- OpenAI GPT-4 for intelligent response generation.
+
+---
+
+## **Recent Updates**
+### **Version 2.0**
+1. **Upgraded LLM Backend**
+   - Migrated to OpenAI's **GPT-4** for better conversational quality and depth.
+   - Improved API request handling for faster response times.
+
+2. **New Continuous Voice Input Feature**
+   - Hands-free interaction with automatic speech recognition.
+   - Uses the Web Speech API to continuously listen and process speech input.
+
+3. **Enhanced Audio Output Toggle**
+   - Users can toggle text-to-speech output during a session.
+   - Clear visual feedback with toggleable buttons.
+
+4. **Improved User Interface**
+   - Redesigned chatbox for better readability.
+   - Integrated project links for quick navigation to related tools.
+
+---
+
+## **Installation**
 
 1. Clone the repository:
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
-
-pip install Flask requests
-
-3. Set your OpenAI API key as an environment variable:
-
-export OPENAI_API_KEY='your-api-key'
-(get one for free from openai)
-
-
-## Running the Chatbot in Flask locally for testing
-
-1. Start the Flask server:
-python app.py
-2. Open your web browser and navigate to `http://localhost:5000`.
-
-3. Start interacting with the chatbot through the web interface.
-
-## Running the Chatbot in Gunicorn for production
-
-For production deployment, it is recommended to use a more robust WSGI server like Gunicorn. Gunicorn is a pre-fork worker model server that is designed to serve various web applications including Flask. It is particularly advantageous for handling multiple simultaneous requests, which is a common scenario in a production environment.
-
-### Installing Gunicorn
-
-You can install Gunicorn via pip:
-
-```bash
-pip install gunicorn
-
-Running the Application with Gunicorn
-Once Gunicorn is installed, you can start your Flask application with it. For example:
-gunicorn -w 4 -b 127.0.0.1:8000 app:app
-
-In this command:
-
--w 4 means that Gunicorn will use 4 worker processes for handling requests.
--b 127.0.0.1:8000 binds Gunicorn to listen on localhost at port 8000.
-app:app tells Gunicorn to load the app module and use the app callable within that module to start the Flask application.
-Using Gunicorn can significantly improve your application's performance and reliability in production. It's also compatible with various deployment environments, including both traditional servers and container-based environments.
+   ```bash
+   git clone https://github.com/chrisjchandler/GordonAI.git
 
 Note
 Gunicorn is only compatible with UNIX-based environments. If you are deploying on a Windows server, you will need to use a different WSGI server that is compatible with Windows.
@@ -66,6 +80,20 @@ Gunicorn is only compatible with UNIX-based environments. If you are deploying o
 ## Configuration
 
 - You can adjust the `total_tokens` and other parameters in the `app.py` file to customize the behavior of the chatbot.
+
+## Open AI Key
+import your open AI key
+export OPENAI_API_KEY="your key name here"
+
+You can get one from Openai.com
+
+## Deployment
+
+Use gunicorn instead of flask to allow for remote connections. 
+
+
+gunicorn -w 4 -t 120 app:app
+
 
 ## License
 
@@ -86,7 +114,7 @@ For any queries or suggestions, please contact [Your Name](mailto:your-email@exa
 
 ---
 
-Made with ♥ by [Chris](https://riotdoor.com)
+Made with ♥ by [Chris](https://about.me/chrisjchandler)
 
 
 
@@ -96,4 +124,4 @@ Made with ♥ by [Chris](https://riotdoor.com)
 import your open AI key
 export OPENAI_API_KEY="your key name here"
 Runs on a flask or gunicorn backend
-demo site @ http://gordon.msitproject.site
+demo site @ https://www.msitproject.site
